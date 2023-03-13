@@ -165,25 +165,66 @@ ARM Macro Assembler    Page 3
                        ************************
    48 00000000         
    49 00000000         
-   50 00000000 F04F 0000       MOV              R0,#0
+   50 00000000 F04F 0000       MOV              R0,#0       ;
    51 00000004 F7FF FFFE       BL               Init_Cible  ;
-   52 00000008         
-   53 00000008 E7FE            B                .           ; boucle inifinie t
+   52 00000008         ; SET
+   53 00000008 F8DF C02C       LDR              R12,=0x40010C00
+   54 0000000C F44F 6580       MOV              R5,#(0x01 << 10)
+   55 00000010 F8AC 5010       STRH             R5,[R12,#0x10] ;On stocke la va
+                                                            riable R5 à l'adres
+                                                            se 0x0X40010C10
+   56 00000014         ; RESET
+   57 00000014 F44F 6580       MOV              R5,#(0x01 << 10)
+   58 00000018 F8AC 5014       STRH             R5,[R12,#0x14] ;On stocke la va
+                                                            riable R5 à l'adres
+                                                            se 0x0X40010C10
+   59 0000001C         
+   60 0000001C         ; ALLUMER LA LED
+   61 0000001C F8DC 500C       LDR              R5,[R12,#0x0C] ;Valeur à l'adre
+                                                            sse de l'output
+   62 00000020 F445 6580       ORR              R5, R5,#(0x01 << 10) ;OU LOGIQU
+                                                            E pour calculer la 
+                                                            valeur a mettre dan
+                                                            s l'output
+   63 00000024 F8AC 500C       STRH             R5,[R12,#0x0C] ;Etat du port B 
+                                                            (R5) stocké dans l'
+                                                            output 
+   64 00000028         
+   65 00000028         ;ETEINDRE LA LED
+   66 00000028 F8DC 500C       LDR              R5,[R12,#0x0C] ;Valeur à l'adre
+                                                            sse de l'output
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+   67 0000002C F425 6580       AND              R5, R5,#~(0x01 << 10) ;OU LOGIQ
+                                                            UE pour calculer la
+                                                             valeur a mettre da
+                                                            ns l'output
+   68 00000030 F8AC 500C       STRH             R5,[R12,#0x0C] ;Etat du port B 
+                                                            (R5) stocké dans l'
+                                                            output 
+   69 00000034         
+   70 00000034 E7FE            B                .           ; boucle inifinie t
                                                             erminale...
-   54 0000000A         
-   55 0000000A         
-   56 0000000A         
-   57 0000000A         
-   58 0000000A                 ENDP
-   59 0000000A         
-   60 0000000A                 END
+   71 00000036         
+   72 00000036         
+   73 00000036         
+   74 00000036         
+   75 00000036                 ENDP
+   76 00000036         
+   77 00000036                 END
+              00 00 40010C00 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\principale.d -o.\objects\principale.o -I.\RTE\Device\STM
-32F107VC -I.\RTE\_R_el -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include -IC:
-\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include --predefine="__EVAL S
-ETA 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 524"
- --predefine="_RTE_ SETA 1" --predefine="STM32F10X_CL SETA 1" --predefine="STM3
-2F10X_CL SETA 1" --list=.\listings\principale.lst Principale.asm
+32F107VC -I.\RTE\_R_el -IC:\Programdata\Keil\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Co
+re\Include -IC:\Programdata\Keil\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Incl
+ude --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="__
+UVISION_VERSION SETA 534" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_CL 
+SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_CL SETA 1" --list=.\l
+istings\principale.lst Principale.asm
 
 
 
@@ -416,4 +457,4 @@ Symbol: |Lib$$Request$$armlib|
       None
 Comment: |Lib$$Request$$armlib| unused
 2 symbols
-359 symbols in table
+361 symbols in table

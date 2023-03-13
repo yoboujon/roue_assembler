@@ -185,11 +185,12 @@ ARM Macro Assembler    Page 3
    62 00000000                 END
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=.\objects\fonctionetape.d -o.\objects\fonctionetape.o -I.\RTE\Devi
-ce\STM32F107VC -I.\RTE\_R_el -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Includ
-e -IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include --predefine="__
-EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SET
-A 524" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_CL SETA 1" --predefine
-="STM32F10X_CL SETA 1" --list=.\listings\fonctionetape.lst FonctionEtape.asm
+ce\STM32F107VC -I.\RTE\_R_el -IC:\Programdata\Keil\Arm\Packs\ARM\CMSIS\5.7.0\CM
+SIS\Core\Include -IC:\Programdata\Keil\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Devic
+e\Include --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefi
+ne="__UVISION_VERSION SETA 534" --predefine="_RTE_ SETA 1" --predefine="STM32F1
+0X_CL SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_CL SETA 1" --li
+st=.\listings\fonctionetape.lst FonctionEtape.asm
 
 
 
