@@ -84,15 +84,19 @@ main   PROC
 		MOV R0,#0;
 		BL Init_Cible;
 Boucle
+		LDR R12,=GPIOBASEA			;On récup l'adresse	du GPIOA		
+		LDR R0,[R12,#OffsetInput]	;On charge sa valeur avec l'OffsetInput
+		AND R0, R0, #(0x01 << 8)	;R0 est masqué pour n'avoir que le bit de l'offset input
+		CMP R0, #(0x01 << 8)		;On compare R0 à 1
+		BNE T_Oui					;On allume
+		BL Eteint_LED				;Sinon on éteint
+		B Boucle					;On reboucle
+				
+T_Oui
 		BL Allume_LED
-		BL Eteint_LED
 		B Boucle
 		
 		B .			 ; boucle inifinie terminale...
-
-
-
-
 		ENDP
 
 	END
