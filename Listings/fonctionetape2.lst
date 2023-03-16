@@ -1,0 +1,502 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;*******************************************************
+                       ********************
+    2 00000000                 THUMB
+    3 00000000                 REQUIRE8
+    4 00000000                 PRESERVE8
+    5 00000000         
+    6 00000000         ;*******************************************************
+                       *******************
+    7 00000000         ;  Fichier Vierge.asm
+    8 00000000         ; Auteur : V.MAHOUT
+    9 00000000         ; Date :  12/11/2013
+   10 00000000         ;*******************************************************
+                       *******************
+   11 00000000         
+   12 00000000         ;***************IMPORT/EXPORT***************************
+                       *******************
+   13 00000000         
+   14 00000000                 EXPORT           Set_SCLK
+   15 00000000                 EXPORT           Reset_SCLK
+   16 00000000                 EXPORT           DriverGlobal
+   17 00000000         
+   18 00000000         ;*******************************************************
+                       *******************
+   19 00000000         
+   20 00000000         
+   21 00000000         
+   22 00000000         ;***************CONSTANTES******************************
+                       *******************
+   23 00000000         
+   24 00000000                 include          REG_UTILES.inc
+    1 00000000         
+    2 00000000         ;**************************************
+    3 00000000         ;     Les adresess utiles  
+    4 00000000         ;***************************************
+    5 00000000         
+    6 00000000         
+    7 00000000         ;**************************************
+    8 00000000         ;     Affectation des bits GPIO  
+    9 00000000         ;***************************************
+   10 00000000         ; GSLCK..... PA0 
+   11 00000000         ; DSPRG..... PA1 
+   12 00000000         ; BLANK..... PA2 
+   13 00000000         ; XLAT...... PA3
+   14 00000000         ; VPRG...... PA4
+   15 00000000         ; SCLK...... PA5
+   16 00000000         ; SIN1...... PA7
+   17 00000000         ;Capteur.....PA8
+   18 00000000         
+   19 00000000         ;LED.........PB10
+   20 00000000         ;****************************************/
+   21 00000000         
+   22 00000000         
+   23 00000000         
+   24 00000000 40010800 
+                       GPIOBASEA
+                               EQU              0X40010800
+   25 00000000 40010C00 
+                       GPIOBASEB
+                               EQU              0X40010C00
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   26 00000000         
+   27 00000000 00000008 
+                       OffsetInput
+                               EQU              0x08
+   28 00000000 0000000C 
+                       OffsetOutput
+                               EQU              0x0C
+   29 00000000 00000010 
+                       OffsetSet
+                               EQU              0x10
+   30 00000000 00000014 
+                       OffsetReset
+                               EQU              0x14
+   31 00000000         
+   32 00000000         
+   33 00000000 00000080 
+                       MaskSerial_In1
+                               equ              0x80
+   34 00000000 00000080 
+                       MaskSerial_Dots
+                               equ              0x80
+   35 00000000 00000010 
+                       MaskVprg
+                               equ              0x10
+   36 00000000 00000008 
+                       MaskXlat
+                               equ              0x08
+   37 00000000 00000004 
+                       MaskBlank
+                               equ              0x04
+   38 00000000 00000020 
+                       MaskSclk
+                               equ              0x20
+   39 00000000 00000002 
+                       MaskDsprg
+                               equ              0x02
+   40 00000000 00000001 
+                       MaskGsclk
+                               equ              0x01
+   41 00000000         
+   42 00000000         
+   43 00000000 E000ED08 
+                       SCB_VTOR
+                               EQU              0xE000ED08
+   44 00000000 40012C10 
+                       TIM1_SR EQU              0x40012c10
+   45 00000000 40012C24 
+                       TIM1_CNT
+                               EQU              0x40012c24
+   46 00000000 4000082C 
+                       TIM4_ARR
+                               EQU              0x4000082C
+   47 00000000 40000810 
+                       TIM4_SR EQU              0x40000810
+   48 00000000         
+   49 00000000         
+   50 00000000         
+   51 00000000         
+   52 00000000         
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   53 00000000                 END
+   25 00000000         
+   26 00000000         ;*******************************************************
+                       *******************
+   27 00000000         
+   28 00000000         
+   29 00000000         ;***************VARIABLES*******************************
+                       *******************
+   30 00000000                 AREA             MesDonnees, data, readwrite
+   31 00000000         ;*******************************************************
+                       *******************
+   32 00000000         
+   33 00000000         
+   34 00000000 00 01 00 
+                       Barette1
+                               DCB              0,1,0
+   35 00000003 00 01 00        DCB              0,1,0
+   36 00000006 00 01 00        DCB              0,1,0
+   37 00000009 00 01 00        DCB              0,1,0
+   38 0000000C 00 01 00        DCB              0,1,0
+   39 0000000F 00 01 00        DCB              0,1,0
+   40 00000012 00 01 00        DCB              0,1,0
+   41 00000015         
+   42 00000015         
+   43 00000015         
+   44 00000015         ;*******************************************************
+                       *******************
+   45 00000015         
+   46 00000015         
+   47 00000015         
+   48 00000015         ;***************CODE************************************
+                       *******************
+   49 00000015                 AREA             moncode, code, readonly
+   50 00000000         ;*******************************************************
+                       *******************
+   51 00000000         
+   52 00000000         Set_SCLK
+                               PROC
+   53 00000000 E92D 1001       PUSH             {R12,R0}    ;On stocke R12 dans
+                                                             R0
+   54 00000004 F8DF C040       LDR              R12,=GPIOBASEA ;On recupère l'a
+                                                            dresse de base
+   55 00000008 F8DC 5020       LDR              R5,[R12,#MaskSclk] ;Valeur à l'
+                                                            adresse de l'output
+                                                            
+   56 0000000C F045 0520       ORR              R5, R5,#(0x01 << 5) ;OU LOGIQUE
+                                                             pour calculer la v
+                                                            aleur a mettre dans
+                                                             l'output
+   57 00000010 F8AC 500C       STRH             R5,[R12,#0x0C] ;Etat du port B 
+                                                            (R5) stocké dans l'
+                                                            output 
+   58 00000014 4770            BX               LR          ;Retour
+   59 00000016         
+   60 00000016                 ENDP
+   61 00000016         
+   62 00000016         Reset_SCLK
+                               PROC
+   63 00000016 E92D 1001       PUSH             {R12,R0}    ;On stocke R12 dans
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+                                                             R0
+   64 0000001A F8DF C030       LDR              R12,=GPIOBASEB ;On recupère l'a
+                                                            dresse de base
+   65 0000001E F8DC 5020       LDR              R5,[R12,#MaskSclk] ;Valeur à l'
+                                                            adresse de l'SCLK
+   66 00000022 F025 0520       AND              R5, R5,#~(0x01 << 5) ;OU LOGIQU
+                                                            E pour calculer la 
+                                                            valeur a mettre dan
+                                                            s l'output
+   67 00000026 F8AC 500C       STRH             R5,[R12,#0x0C] ;Etat du port B 
+                                                            (R5) stocké dans l'
+                                                            output  
+   68 0000002A 4770            BX               LR          ;Retour
+   69 0000002C         
+   70 0000002C                 ENDP
+   71 0000002C         
+   72 0000002C         ;*******************************************************
+                       *********************
+   73 0000002C         ;R6 = NBLed
+   74 0000002C         ;R7 = *ValCourante
+   75 0000002C         ;R8 = ValCourante[NBLed]
+   76 0000002C         ;*******************************************************
+                       *********************
+   77 0000002C         DriverGlobal
+                               PROC
+   78 0000002C F7FF FFFE       BL               Set_SCLK    ;
+   79 00000030 F04F 0600       MOV              R6, #0      ;
+   80 00000034         WHILE_NBLED
+   81 00000034         ;Pour NbLed = 1 à 48
+   82 00000034 4F06            LDR              R7,=Barette1 ;On recupère l'adr
+                                                            esse de base
+   83 00000036 F817 8006       LDRB             R8,[R7,R6]  ;R8 = ValCourante[.
+                                                            ..NBLed]
+   84 0000003A         
+   85 0000003A EA4F 6808       LSL              R8,#24      ;ValCourante[NBLed]
+                                                            <<24
+   86 0000003E         
+   87 0000003E F106 0601       ADD              R6, R6, #1  ;On incrémente R6
+   88 00000042 2E2F            CMP              R6, #47     ; SI R6==47 alors o
+                                                            n arrête la boucle
+   89 00000044 D1F6            BNE              WHILE_NBLED
+   90 00000046                 ENDP
+   91 00000046         
+   92 00000046         ;*******************************************************
+                       *******************
+   93 00000046                 END
+              00 00 40010800 
+              40010C00 
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\objects\fonctionetape2.d -o.\objects\fonctionetape2.o -I.\RTE\De
+vice\STM32F103RB -I.\RTE\_Simul_ -IC:\Programdata\Keil\Arm\Packs\ARM\CMSIS\5.7.
+0\CMSIS\Core\Include -IC:\Programdata\Keil\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\D
+evice\Include --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --pre
+define="__UVISION_VERSION SETA 534" --predefine="_RTE_ SETA 1" --predefine="STM
+32F10X_MD SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_MD SETA 1" 
+--list=.\listings\fonctionetape2.lst FonctionEtape2.asm
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Barette1 00000000
+
+Symbol: Barette1
+   Definitions
+      At line 34 in file FonctionEtape2.asm
+   Uses
+      At line 82 in file FonctionEtape2.asm
+Comment: Barette1 used once
+MesDonnees 00000000
+
+Symbol: MesDonnees
+   Definitions
+      At line 30 in file FonctionEtape2.asm
+   Uses
+      None
+Comment: MesDonnees unused
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+DriverGlobal 0000002C
+
+Symbol: DriverGlobal
+   Definitions
+      At line 77 in file FonctionEtape2.asm
+   Uses
+      At line 16 in file FonctionEtape2.asm
+Comment: DriverGlobal used once
+Reset_SCLK 00000016
+
+Symbol: Reset_SCLK
+   Definitions
+      At line 62 in file FonctionEtape2.asm
+   Uses
+      At line 15 in file FonctionEtape2.asm
+Comment: Reset_SCLK used once
+Set_SCLK 00000000
+
+Symbol: Set_SCLK
+   Definitions
+      At line 52 in file FonctionEtape2.asm
+   Uses
+      At line 14 in file FonctionEtape2.asm
+      At line 78 in file FonctionEtape2.asm
+
+WHILE_NBLED 00000034
+
+Symbol: WHILE_NBLED
+   Definitions
+      At line 80 in file FonctionEtape2.asm
+   Uses
+      At line 89 in file FonctionEtape2.asm
+Comment: WHILE_NBLED used once
+moncode 00000000
+
+Symbol: moncode
+   Definitions
+      At line 49 in file FonctionEtape2.asm
+   Uses
+      None
+Comment: moncode unused
+5 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+GPIOBASEA 40010800
+
+Symbol: GPIOBASEA
+   Definitions
+      At line 24 in file REG_UTILES.inc
+   Uses
+      At line 54 in file FonctionEtape2.asm
+Comment: GPIOBASEA used once
+GPIOBASEB 40010C00
+
+Symbol: GPIOBASEB
+   Definitions
+      At line 25 in file REG_UTILES.inc
+   Uses
+      At line 64 in file FonctionEtape2.asm
+Comment: GPIOBASEB used once
+MaskBlank 00000004
+
+Symbol: MaskBlank
+   Definitions
+      At line 37 in file REG_UTILES.inc
+   Uses
+      None
+Comment: MaskBlank unused
+MaskDsprg 00000002
+
+Symbol: MaskDsprg
+   Definitions
+      At line 39 in file REG_UTILES.inc
+   Uses
+      None
+Comment: MaskDsprg unused
+MaskGsclk 00000001
+
+Symbol: MaskGsclk
+   Definitions
+      At line 40 in file REG_UTILES.inc
+   Uses
+      None
+Comment: MaskGsclk unused
+MaskSclk 00000020
+
+Symbol: MaskSclk
+   Definitions
+      At line 38 in file REG_UTILES.inc
+   Uses
+      At line 55 in file FonctionEtape2.asm
+      At line 65 in file FonctionEtape2.asm
+
+MaskSerial_Dots 00000080
+
+Symbol: MaskSerial_Dots
+   Definitions
+      At line 34 in file REG_UTILES.inc
+   Uses
+      None
+Comment: MaskSerial_Dots unused
+MaskSerial_In1 00000080
+
+
+
+
+ARM Macro Assembler    Page 2 Alphabetic symbol ordering
+Absolute symbols
+
+Symbol: MaskSerial_In1
+   Definitions
+      At line 33 in file REG_UTILES.inc
+   Uses
+      None
+Comment: MaskSerial_In1 unused
+MaskVprg 00000010
+
+Symbol: MaskVprg
+   Definitions
+      At line 35 in file REG_UTILES.inc
+   Uses
+      None
+Comment: MaskVprg unused
+MaskXlat 00000008
+
+Symbol: MaskXlat
+   Definitions
+      At line 36 in file REG_UTILES.inc
+   Uses
+      None
+Comment: MaskXlat unused
+OffsetInput 00000008
+
+Symbol: OffsetInput
+   Definitions
+      At line 27 in file REG_UTILES.inc
+   Uses
+      None
+Comment: OffsetInput unused
+OffsetOutput 0000000C
+
+Symbol: OffsetOutput
+   Definitions
+      At line 28 in file REG_UTILES.inc
+   Uses
+      None
+Comment: OffsetOutput unused
+OffsetReset 00000014
+
+Symbol: OffsetReset
+   Definitions
+      At line 30 in file REG_UTILES.inc
+   Uses
+      None
+Comment: OffsetReset unused
+OffsetSet 00000010
+
+Symbol: OffsetSet
+   Definitions
+      At line 29 in file REG_UTILES.inc
+   Uses
+      None
+Comment: OffsetSet unused
+SCB_VTOR E000ED08
+
+Symbol: SCB_VTOR
+   Definitions
+      At line 43 in file REG_UTILES.inc
+
+
+
+ARM Macro Assembler    Page 3 Alphabetic symbol ordering
+Absolute symbols
+
+   Uses
+      None
+Comment: SCB_VTOR unused
+TIM1_CNT 40012C24
+
+Symbol: TIM1_CNT
+   Definitions
+      At line 45 in file REG_UTILES.inc
+   Uses
+      None
+Comment: TIM1_CNT unused
+TIM1_SR 40012C10
+
+Symbol: TIM1_SR
+   Definitions
+      At line 44 in file REG_UTILES.inc
+   Uses
+      None
+Comment: TIM1_SR unused
+TIM4_ARR 4000082C
+
+Symbol: TIM4_ARR
+   Definitions
+      At line 46 in file REG_UTILES.inc
+   Uses
+      None
+Comment: TIM4_ARR unused
+TIM4_SR 40000810
+
+Symbol: TIM4_SR
+   Definitions
+      At line 47 in file REG_UTILES.inc
+   Uses
+      None
+Comment: TIM4_SR unused
+19 symbols
+363 symbols in table

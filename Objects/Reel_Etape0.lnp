@@ -1,6 +1,7 @@
 --cpu Cortex-M3
 ".\objects\principale.o"
 ".\objects\fonctionetape.o"
+".\objects\fonctionetape2.o"
 ".\Matos.lib"
 ".\objects\startup_stm32f10x_cl.o"
 ".\objects\system_stm32f10x_1.o"

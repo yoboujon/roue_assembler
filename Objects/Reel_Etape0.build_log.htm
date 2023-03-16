@@ -21,21 +21,23 @@ Target DLL:      UL2CM3.DLL V1.163.9.0
 Dialog DLL:      TCM.DLL V1.48.0.0
  
 <h2>Project:</h2>
-U:\Windows\Bureau\roue_assembler\Etape_1.uvprojx
+U:\Windows\Bureau\roue_assembler\Etape_2.uvprojx
 Project File Date:  03/16/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Rebuild target 'Réel'
 Note: source file 'RTE\Device\STM32F107VC\system_stm32f10x.c' - object file renamed from '.\Objects\system_stm32f10x.o' to '.\Objects\system_stm32f10x_1.o'.
-assembling FonctionEtape.asm...
 assembling Principale.asm...
-Principale.asm(98): warning: A1488W: PROC/FUNC at line 79 in 'Principale.asm' without matching ENDP/ENDFUNC
+assembling FonctionEtape.asm...
+FonctionEtape.asm(119): warning: A1581W: Added 2 bytes of padding at address 0x56
 assembling startup_stm32f10x_cl.s...
+assembling FonctionEtape2.asm...
+FonctionEtape2.asm(84): warning: A1581W: Added 2 bytes of padding at address 0x76
 compiling system_stm32f10x.c...
 linking...
-Program Size: Code=4828 RO-data=368 RW-data=144 ZI-data=1024  
-".\Objects\Reel_Etape0.axf" - 0 Error(s), 1 Warning(s).
+Program Size: Code=4916 RO-data=368 RW-data=144 ZI-data=1024  
+".\Objects\Reel_Etape0.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -63,8 +65,8 @@ Package Vendor: Keil
 
    * Component: Keil::Device:Startup:1.0.0
       Source file:   Device\Source\system_stm32f10x.c
-      Source file:   Device\Source\ARM\startup_stm32f10x_cl.s
       Include file:  RTE_Driver\Config\RTE_Device.h
+      Source file:   Device\Source\ARM\startup_stm32f10x_cl.s
       Source file:   Device\Source\ARM\STM32F1xx_OPT.s
 Build Time Elapsed:  00:00:01
 </pre>
