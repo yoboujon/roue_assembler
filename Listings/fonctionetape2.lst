@@ -172,90 +172,86 @@ ARM Macro Assembler    Page 3
    51 00000000         
    52 00000000         Set_SCLK
                                PROC
-   53 00000000 E92D 1001       PUSH             {R12,R0}    ;On stocke R12 dans
-                                                             R0
-   54 00000004 F8DF C040       LDR              R12,=GPIOBASEA ;On recupère l'a
-                                                            dresse de base
-   55 00000008 F8DC 5020       LDR              R5,[R12,#MaskSclk] ;Valeur à l'
-                                                            adresse de l'output
-                                                            
-   56 0000000C F045 0520       ORR              R5, R5,#(0x01 << 5) ;OU LOGIQUE
-                                                             pour calculer la v
-                                                            aleur a mettre dans
-                                                             l'output
-   57 00000010 F8AC 500C       STRH             R5,[R12,#0x0C] ;Etat du port B 
-                                                            (R5) stocké dans l'
-                                                            output 
-   58 00000014 4770            BX               LR          ;Retour
-   59 00000016         
-   60 00000016                 ENDP
-   61 00000016         
-   62 00000016         Reset_SCLK
+   53 00000000 B407            PUSH             {R0-R2}     ;On stocke R0 à R2
+   54 00000002 490D            LDR              R1,=GPIOBASEA ;R1 -> Adresse de
+                                                             GPIOA
+   55 00000004 898A            LDRH             R2,[R1,#OffsetOutput] ;Valeur à
+                                                             l'adresse d'ODR : 
+                                                            R2 = GPIOA->ODR
+   56 00000006 F042 0220       ORR              R2, R2,#(0x01 << 5) ;similaire 
+                                                            à GPIOA->ODR |= (1<
+                                                            <5)
+   57 0000000A 818A            STRH             R2,[R1,#OffsetOutput] ;Etat du 
+                                                            port B (R5) stocké 
+                                                            dans ODR
+   58 0000000C 4770            BX               LR          ;Retour
+   59 0000000E         
+   60 0000000E                 ENDP
+   61 0000000E         
+   62 0000000E         Reset_SCLK
                                PROC
-   63 00000016 E92D 1001       PUSH             {R12,R0}    ;On stocke R12 dans
+   63 0000000E B407            PUSH             {R0-R2}     ;On stocke R0 à R2
+   64 00000010 4909            LDR              R1,=GPIOBASEA ;R1 -> Adresse de
+                                                             GPIOA
 
 
 
 ARM Macro Assembler    Page 4 
 
 
-                                                             R0
-   64 0000001A F8DF C030       LDR              R12,=GPIOBASEB ;On recupère l'a
-                                                            dresse de base
-   65 0000001E F8DC 5020       LDR              R5,[R12,#MaskSclk] ;Valeur à l'
-                                                            adresse de l'SCLK
-   66 00000022 F025 0520       AND              R5, R5,#~(0x01 << 5) ;OU LOGIQU
-                                                            E pour calculer la 
-                                                            valeur a mettre dan
-                                                            s l'output
-   67 00000026 F8AC 500C       STRH             R5,[R12,#0x0C] ;Etat du port B 
-                                                            (R5) stocké dans l'
-                                                            output  
-   68 0000002A 4770            BX               LR          ;Retour
-   69 0000002C         
-   70 0000002C                 ENDP
-   71 0000002C         
-   72 0000002C         ;*******************************************************
+   65 00000012 898A            LDRH             R2,[R1,#OffsetOutput] ;Valeur à
+                                                             l'adresse d'ODR : 
+                                                            R2 = GPIOA->ODR
+   66 00000014 F022 0220       AND              R2, R2,#~(0x01 << 5) ;similaire
+                                                             à GPIOA->ODR &= ~(
+                                                            1<<5)
+   67 00000018 818A            STRH             R2,[R1,#OffsetOutput] ;Etat du 
+                                                            port B (R5) stocké 
+                                                            dans ODR
+   68 0000001A 4770            BX               LR          ;Retour
+   69 0000001C         
+   70 0000001C                 ENDP
+   71 0000001C         
+   72 0000001C         ;*******************************************************
                        *********************
-   73 0000002C         ;R6 = NBLed
-   74 0000002C         ;R7 = *ValCourante
-   75 0000002C         ;R8 = ValCourante[NBLed]
-   76 0000002C         ;*******************************************************
+   73 0000001C         ;R6 = NBLed
+   74 0000001C         ;R7 = *ValCourante
+   75 0000001C         ;R8 = ValCourante[NBLed]
+   76 0000001C         ;*******************************************************
                        *********************
-   77 0000002C         DriverGlobal
+   77 0000001C         DriverGlobal
                                PROC
-   78 0000002C F7FF FFFE       BL               Set_SCLK    ;
-   79 00000030 F04F 0600       MOV              R6, #0      ;
-   80 00000034         WHILE_NBLED
-   81 00000034         ;Pour NbLed = 1 à 48
-   82 00000034 4F06            LDR              R7,=Barette1 ;On recupère l'adr
+   78 0000001C F7FF FFFE       BL               Set_SCLK    ;
+   79 00000020 F04F 0600       MOV              R6, #0      ;
+   80 00000024         WHILE_NBLED
+   81 00000024         ;Pour NbLed = 1 à 48
+   82 00000024 4F05            LDR              R7,=Barette1 ;On recupère l'adr
                                                             esse de base
-   83 00000036 F817 8006       LDRB             R8,[R7,R6]  ;R8 = ValCourante[.
+   83 00000026 F817 8006       LDRB             R8,[R7,R6]  ;R8 = ValCourante[.
                                                             ..NBLed]
-   84 0000003A         
-   85 0000003A EA4F 6808       LSL              R8,#24      ;ValCourante[NBLed]
+   84 0000002A         
+   85 0000002A EA4F 6808       LSL              R8,#24      ;ValCourante[NBLed]
                                                             <<24
-   86 0000003E         
-   87 0000003E F106 0601       ADD              R6, R6, #1  ;On incrémente R6
-   88 00000042 2E2F            CMP              R6, #47     ; SI R6==47 alors o
+   86 0000002E         
+   87 0000002E F106 0601       ADD              R6, R6, #1  ;On incrémente R6
+   88 00000032 2E2F            CMP              R6, #47     ; SI R6==47 alors o
                                                             n arrête la boucle
-   89 00000044 D1F6            BNE              WHILE_NBLED
-   90 00000046                 ENDP
-   91 00000046         
-   92 00000046         ;*******************************************************
+   89 00000034 D1F6            BNE              WHILE_NBLED
+   90 00000036                 ENDP
+   91 00000036         
+   92 00000036         ;*******************************************************
                        *******************
-   93 00000046                 END
+   93 00000036                 END
               00 00 40010800 
-              40010C00 
               00000000 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
-ork --depend=.\objects\fonctionetape2.d -o.\objects\fonctionetape2.o -I.\RTE\De
-vice\STM32F103RB -I.\RTE\_Simul_ -IC:\Programdata\Keil\Arm\Packs\ARM\CMSIS\5.7.
-0\CMSIS\Core\Include -IC:\Programdata\Keil\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\D
-evice\Include --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --pre
-define="__UVISION_VERSION SETA 534" --predefine="_RTE_ SETA 1" --predefine="STM
-32F10X_MD SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_MD SETA 1" 
---list=.\listings\fonctionetape2.lst FonctionEtape2.asm
+Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M3 --depe
+nd=.\objects\fonctionetape2.d -o.\objects\fonctionetape2.o -I.\RTE\Device\STM32
+F103RB -I.\RTE\_Simul_ -IC:\Users\alzyo\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0
+\CMSIS\Core\Include -IC:\Users\alzyo\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP
+\2.4.0\Device\Include --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 
+1" --predefine="__UVISION_VERSION SETA 538" --predefine="_RTE_ SETA 1" --predef
+ine="STM32F10X_MD SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_MD 
+SETA 1" --list=.\listings\fonctionetape2.lst FonctionEtape2.asm
 
 
 
@@ -285,7 +281,7 @@ Comment: MesDonnees unused
 ARM Macro Assembler    Page 1 Alphabetic symbol ordering
 Relocatable symbols
 
-DriverGlobal 0000002C
+DriverGlobal 0000001C
 
 Symbol: DriverGlobal
    Definitions
@@ -293,7 +289,7 @@ Symbol: DriverGlobal
    Uses
       At line 16 in file FonctionEtape2.asm
 Comment: DriverGlobal used once
-Reset_SCLK 00000016
+Reset_SCLK 0000000E
 
 Symbol: Reset_SCLK
    Definitions
@@ -310,7 +306,7 @@ Symbol: Set_SCLK
       At line 14 in file FonctionEtape2.asm
       At line 78 in file FonctionEtape2.asm
 
-WHILE_NBLED 00000034
+WHILE_NBLED 00000024
 
 Symbol: WHILE_NBLED
    Definitions
@@ -340,15 +336,16 @@ Symbol: GPIOBASEA
       At line 24 in file REG_UTILES.inc
    Uses
       At line 54 in file FonctionEtape2.asm
-Comment: GPIOBASEA used once
+      At line 64 in file FonctionEtape2.asm
+
 GPIOBASEB 40010C00
 
 Symbol: GPIOBASEB
    Definitions
       At line 25 in file REG_UTILES.inc
    Uses
-      At line 64 in file FonctionEtape2.asm
-Comment: GPIOBASEB used once
+      None
+Comment: GPIOBASEB unused
 MaskBlank 00000004
 
 Symbol: MaskBlank
@@ -379,9 +376,8 @@ Symbol: MaskSclk
    Definitions
       At line 38 in file REG_UTILES.inc
    Uses
-      At line 55 in file FonctionEtape2.asm
-      At line 65 in file FonctionEtape2.asm
-
+      None
+Comment: MaskSclk unused
 MaskSerial_Dots 00000080
 
 Symbol: MaskSerial_Dots
@@ -434,8 +430,11 @@ Symbol: OffsetOutput
    Definitions
       At line 28 in file REG_UTILES.inc
    Uses
-      None
-Comment: OffsetOutput unused
+      At line 55 in file FonctionEtape2.asm
+      At line 57 in file FonctionEtape2.asm
+      At line 65 in file FonctionEtape2.asm
+      At line 67 in file FonctionEtape2.asm
+
 OffsetReset 00000014
 
 Symbol: OffsetReset
@@ -454,15 +453,15 @@ Symbol: OffsetSet
 Comment: OffsetSet unused
 SCB_VTOR E000ED08
 
-Symbol: SCB_VTOR
-   Definitions
-      At line 43 in file REG_UTILES.inc
 
 
 
 ARM Macro Assembler    Page 3 Alphabetic symbol ordering
 Absolute symbols
 
+Symbol: SCB_VTOR
+   Definitions
+      At line 43 in file REG_UTILES.inc
    Uses
       None
 Comment: SCB_VTOR unused

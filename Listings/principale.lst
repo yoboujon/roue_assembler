@@ -223,14 +223,14 @@ ARM Macro Assembler    Page 4
    88 0000000A                 ENDP
    89 0000000A         
    90 0000000A                 END
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
-ork --depend=.\objects\principale.d -o.\objects\principale.o -I.\RTE\Device\STM
-32F103RB -I.\RTE\_Simul_ -IC:\Programdata\Keil\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\
-Core\Include -IC:\Programdata\Keil\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\In
-clude --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --predefine="
-__UVISION_VERSION SETA 534" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_M
-D SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_MD SETA 1" --list=.
-\listings\principale.lst Principale.asm
+Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M3 --depe
+nd=.\objects\principale.d -o.\objects\principale.o -I.\RTE\Device\STM32F103RB -
+I.\RTE\_Simul_ -IC:\Users\alzyo\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\C
+ore\Include -IC:\Users\alzyo\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.4.0\D
+evice\Include --predefine="__EVAL SETA 1" --predefine="__MICROLIB SETA 1" --pre
+define="__UVISION_VERSION SETA 538" --predefine="_RTE_ SETA 1" --predefine="STM
+32F10X_MD SETA 1" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_MD SETA 1" 
+--list=.\listings\principale.lst Principale.asm
 
 
 
