@@ -34,7 +34,8 @@ SCLK 		EQU 5
 SIN1 		EQU 7
 	
 PF			DCD (1<<31)
-Barette1 	DCB 0xff,0,0
+DataSend	DCB 1
+Barette1 	DCB 0xad,0xff,0
 			DCB 0,0xff,0
 			DCB 0,0,0xff
 			DCB 0xff,0,0
@@ -72,27 +73,27 @@ Set_SCLK	PROC
 	ENDP
 		
 Set_X	PROC
-		PUSH {R1,R2}				;On stocke R0 à R4 dans SP
+		PUSH {R1,R2}				;On stocke R1 et R2 dans SP
 		MOV R1, #1					;*******
 		LSL R0, R1, R0				;1<<Arg
 		LDR R1,=GPIOBASEA			;R1 -> Adresse de GPIOA
 		LDRH R2,[R1,#OffsetOutput]	;Valeur à l'adresse d'ODR : R2 = GPIOA->ODR
 		ORR R2, R2, R0				;similaire à GPIOA->ODR |= (1<<Arg)
-		STRH R2,[R1,#OffsetOutput]	;Etat du port B (R5) stocké dans ODR
+		STRH R2,[R1,#OffsetOutput]	;Etat du port B (R2) stocké dans ODR
 		POP{R1,R2}					;Déchargement de la pile
 		BX LR						;Retour
 	
 	ENDP
 		
 Reset_X	PROC
-		PUSH {R1,R2}				;On stocke R0 à R4 dans SP
+		PUSH {R1,R2}				;On stocke R1 et R2 dans SP
 		MOV R1, #1					;*******
 		LSL R0, R1, R0				;1<<Arg
 		MVN R0, R0					;~(1<<Arg)
 		LDR R1,=GPIOBASEA			;R1 -> Adresse de GPIOA
 		LDRH R2,[R1,#OffsetOutput]	;Valeur à l'adresse d'ODR : R2 = GPIOA->ODR
 		AND R2, R2, R0				;similaire à GPIOA->ODR &= ~(1<<Arg)
-		STRH R2,[R1,#OffsetOutput]	;Etat du port B (R5) stocké dans ODR
+		STRH R2,[R1,#OffsetOutput]	;Etat du port B (R2) stocké dans ODR
 		POP{R1,R2}					;Déchargement de la pile
 		BX LR						;Retour
 	
@@ -148,7 +149,9 @@ PoidFortOKJUMP				;Fin Si
 		
 		MOV R0, #SCLK	;Argument SCLK
 		BL Reset_X;		;Reset_X(SCLK)
-		;LDR R0,=		;DataSend <- 0
+		LDR R0,=DataSend;Adresse de DataSend
+		MOV R1,#0		; DataSend
+		STRB R1,[R0,#0]	;DataSend=0
 		B .				;while(1)
 		
 PoidFortOKIF
