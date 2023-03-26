@@ -124,6 +124,11 @@ WHILE_NBLED
 		ADD R6, R6, #1		;On incrémente R6
 		CMP R6, #47			; SI R6==47 alors on arrête la boucle
 		BNE WHILE_NBLED
+		
+		MOV R0, #SCLK	;************
+		PUSH {R0}		;Reset_X(SCLK)
+		BL Reset_X;		;************
+		B .				;while(1)
 	ENDP
 
 ;**************************************************************************
