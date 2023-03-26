@@ -19,7 +19,7 @@ void * gpioA = (void *)0x40010800;
 
 int main(void)
 {
-	add(5);
+	set(5);
 	invert(0x20);
 	return 0;
 }
@@ -29,7 +29,7 @@ int invert(int x){ return ~x }
 ```
 
 Ensuite je lance la commande suivante pour compiler le tout dans un niveau d'optimisation choisi :
-```bash
+```shell
 arm-bibe-eabi-gcc -OX -c test.c -o test.o
 ```
 
@@ -40,7 +40,7 @@ arm-bibe-eabi-gcc -OX -c test.c -o test.o
 |-O2|Maximale|
 
 Et enfin pour voir le résultat en assembler dans la le terminal :
-```bash
+```shell
 arm-none-eabi-objdump -D test.o
 ```
 
