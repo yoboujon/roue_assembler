@@ -14,6 +14,7 @@
 	EXPORT Set_SCLK
 	EXPORT Reset_SCLK
 	EXPORT DriverGlobal
+	EXPORT Tempo
 
 ;**************************************************************************
 
@@ -32,6 +33,7 @@
 
 SCLK 		EQU 5
 SIN1 		EQU 7
+MILSEC		EQU 1304
 	
 PF			DCD (1<<31)
 DataSend	DCB 1
@@ -107,6 +109,24 @@ Reset_SCLK	PROC
 		STRH R2,[R1,#OffsetOutput]	;Etat du port B (R5) stocké dans ODR
 		BX LR						;Retour
 	
+	ENDP
+		
+Tempo PROC
+		MOV R1,#10					;*******
+		MUL R0,R0,R1				;10*Argument
+		MOV R2,#MILSEC				;1304, la constante pour avoir 0.01ms
+		MOV R3,#0					;0
+WHILE_NBMIL							;for(int i=0;i<10*Arg;i++)
+		ADD R3,R3,#1				;i++
+		MOV R1,#0					;j=0
+		CMP R3,R0					;SI i==10*Arg alors on arrête la boucle
+		BXEQ LR
+WHILE_NOPL							;for(int j=0;j<1304;j++)
+		NOP							;Timing
+		ADD R1,R1,#1				;j++
+		CMP R1,R2					;SI j==1304 alors on arrête la sous-boucle
+		BNE WHILE_NOPL				;NON : On retourne dans cette boucle
+		B WHILE_NBMIL				;OUI : On retourne dans la surboucle
 	ENDP
 		
 ;****************************************************************************

@@ -29,6 +29,7 @@
 	IMPORT Set_SCLK
 	IMPORT Reset_SCLK
 	IMPORT DriverGlobal
+	IMPORT Tempo
 
 	EXPORT main
 	
@@ -60,7 +61,9 @@ main   PROC
 ;*******************************************************************************
 ; ETAPE 2
 ;*******************************************************************************
-		BL DriverGlobal;
+		BL DriverGlobal		;*******************
+		MOV R0, #10			;Argument : 10ms
+		BL Tempo;			:Tempo(10)
 		
 ;*******************************************************************************
 ; ETAPE 1

@@ -7,6 +7,7 @@ Le but sera de faire fonctionner diverses LEDS à l'aide d'un STM32 et tout cela
 |Set_X|**1** - R0 : PINAX||Pour un output donné, met à 1 ce dernier.|
 |Reset_X|**1** - R0 : PINAX||Pour un output donné, force à 0 ce dernier.|
 |DriverGlobal|||Pour une Barette de LED donnée, envoie les signaux demandés|
+|Tempo|**1** - R0 : Nms||Pour un temps donné, le processeur se met en attente (similaire à sleep)|
 
 ---
 Chaque fonction prendra des arguments de R0 à R3 (avec R3 étant une référence au tas si le besoin d'argument est supérieur à 3). Le renvoi se fait sur R0.
