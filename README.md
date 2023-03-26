@@ -13,7 +13,29 @@ Chaque fonction prendra des arguments de R0 à R3 (avec R3 étant une référenc
 
 ## Main
 
-Le main pour l'instant ne fait qu'appeler DriverGlobal.
+La première chose pour l'étape 2 est de mettre l'argument de Init_Cible à 1. Malheuresement cette partie étant précompilé, il n'est pas possible de modifier directement les variables qu'il lit dans la pile. En effet en lisant les premières lignes nous pouvons appercevoir quelques lectures de variables :
+```assembly
+Init_Cible PROC
+	PUSH {R4-R6}
+	MOV R4,R0
+	LDR R0,[pc,#212]  ; @0x080009A4
+	LDR R0,[R0,#0x18] ; On lit dans 0x40021000 la variable en 0x18
+	ORR R0,R0,#0x0C   ; On force la valeur 0x0C dans R0
+ENDP
+```
+
+Visiblement, d'après la librairie STM32 0x40021000 correspond au RCC, plus précisement au APB2ENR *(décalé de 24 octets.)* :
+
+```c
+	RCC_TypeDef * rccPointer = RCC ;                  //0x40021000
+	volatile uint32_t * apb2enrValue = &(RCC->APB2ENR);		//0x40021018
+```
+
+En réalité j'ai par la suite changé ce paramètre en 1. Avec la valeur forcée en 0x0C, cela va donner 0x0D soit 1101. D'après la datasheet cela devrait activer la clock sur le GPIOA et B. le 0x01 lui va activer le AFIO qui est étrange ? L'argument de la fonction ne serait donc pas cette variable, qui est juste globale. Mais je ne vois pas d'autre solution pour le moment.. En effet bien que R4 et R6 sont égaux à 0 dès le lancement de cette fonction, elles sont directement modifiée pour lire des variables stockées dans le tas. 
+
+(Par la suite le Timer2,3,4 sont allumés (APB1ENR |= 0x07))
+
+On appelle ensuite le DriverGlobal
 
 ## Variables globales
 
