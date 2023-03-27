@@ -15,6 +15,7 @@
 	EXPORT Reset_SCLK
 	EXPORT DriverGlobal
 	EXPORT Tempo
+	EXPORT DriverReg
 
 ;**************************************************************************
 
@@ -23,6 +24,7 @@
 ;***************CONSTANTES*************************************************
 
 	include REG_UTILES.inc 
+	include LUMIERES.inc
 
 ;**************************************************************************
 
@@ -37,24 +39,6 @@ MILSEC		EQU 1304
 	
 PF			DCD (1<<31)
 DataSend	DCB 1
-Barette1 	DCB 0xad,0xff,0
-			DCB 0,0xff,0
-			DCB 0,0,0xff
-			DCB 0xff,0,0
-			DCB 0xff,0xff,0
-			DCB 0xff,0xff,0xff
-			DCB 0xff,0,0
-			DCB 0,0xff,0
-			DCB 0,0,0xff
-			DCB 0xff,0,0
-			DCB 0xff,0xff,0
-			DCB 0xff,0xff,0xff
-			DCB 0xff,0,0
-			DCB 0xff,0xff,0
-			DCB 0xff,0xff,0xff
-			DCB 0x0f,0xff,0x00
-			
-
 
 ;**************************************************************************
 
@@ -177,6 +161,61 @@ PoidFortOKJUMP				;Fin Si
 PoidFortOKIF
 	BL Set_X			;Set_X(SCLK)
 	B PoidFortOKJUMP	;After Reset8X
+	
+	ENDP
+
+;****************************************************************************
+;R0 Argument : Barette
+;R1 = *ValCourante
+;R2 = NBLed (i)
+;R3 = ValCourante[i]
+;****************************************************************************
+
+DriverReg	PROC
+		PUSH {LR}	;R7 recupère LR
+		MOV R1,R0		;On recupère l'adresse de base
+		MOV R0, #SCLK	;Argument SCLK
+		BL Set_X;		;Set_X(SCLK)
+		
+		MOV R2, #0;			;*************************
+REG_WHILE_NBLED					;for(int i=0;i<48;i++)
+		LDRB R3,[R1,R2]		;ValCourante[i]
+		LSL R3,#24			;ValCourante[i]<<24
+		
+		LDR R0,=PF
+		LDR R5,[R0,#0]	;R5 = (1<<31)
+		MOV R4, #0		;*************************
+REG_WHILE_NBBIT				;for(int j=0;j<12;j++)
+		MOV R0, #SCLK		;Argument SCLK
+		BL Reset_X;			;Reset_X(SCLK)
+		MOV R0, #SIN1		;Argument SIN1
+		AND R6,R3,R5		;ValCourante[i] &= (1<<31) (<- PF)
+		CMP R6,R5			;if(PF == 1)
+		BEQ REG_PoidFortOKIF;{ Set_X(SIN1) }
+		BL Reset_X;			;else { Reset_X(SIN1) }
+REG_PoidFortOKJUMP			;Fin Si
+		LSL R3,#1			;ValeurCourante[i]<<1
+		MOV R0, #SCLK		;Argument SCLK
+		BL Set_X;			;Set_X(SCLK)
+		ADD R4, R4, #1		;On incrémente NBBit
+		CMP R4, #11			;SI NBBIT==11 alors on arrête la boucle
+		BNE REG_WHILE_NBBIT
+		
+		ADD R2, R2, #1		;On incrémente NBLed
+		CMP R2, #47			;SI NBLED==47 alors on arrête la boucle
+		BNE REG_WHILE_NBLED
+		
+		MOV R0, #SCLK	;Argument SCLK
+		BL Reset_X;		;Reset_X(SCLK)
+		LDR R0,=DataSend;Adresse de DataSend
+		MOV R1,#0		; DataSend
+		STRB R1,[R0,#0]	;DataSend=0
+		POP {LR}
+		BX LR			;while(1)
+		
+REG_PoidFortOKIF
+	BL Set_X				;Set_X(SCLK)
+	B REG_PoidFortOKJUMP	;After Reset8X
 	
 	ENDP
 

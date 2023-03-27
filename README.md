@@ -1,13 +1,25 @@
 # But du projet
 Le but sera de faire fonctionner diverses LEDS à l'aide d'un STM32 et tout cela en langage Assembler.
 # Fonctionnalitées
+
+## Variables
+|Nom|Description|Source|Type|
+|---|---|---|---|
+|Barette1|Jeu de LED : 16\*3 Données sur 1 octet|[LUMIERES.inc](LUMIERES.inc)|```Data Memory```|
+|Barette2|2ème jeu de LED avec des couleurs différentes|[LUMIERES.inc](LUMIERES.inc)|```Data Memory```|
+|SCLK|PIN pour SCLK (5)|[FonctionEtape2.asm](FonctionEtape2.asm)|```Egalitée```|
+|SIN1|PIN pour SIN1 (7)|[FonctionEtape2.asm](FonctionEtape2.asm)|```Egalitée```|
+|MILSEC|Pour Tempo(Nms) -> Le nombre d'itération pour avoir 1ms|[FonctionEtape2.asm](FonctionEtape2.asm)|```Egalitée```|
+|PF|Décalage à 31 bits pour le Poid Fort|[FonctionEtape2.asm](FonctionEtape2.asm)|```Data Memory```|
+|DataSend|Variable globale pour savoir si une donnée est transmise|[FonctionEtape2.asm](FonctionEtape2.asm)|```Data Memory```|
 ## Fonctions
 |Nom|Argument(s)|Retour|Description|
 |---|---|---|---|
 |Set_X|**1** - R0 : PINAX||Pour un output donné, met à 1 ce dernier.|
 |Reset_X|**1** - R0 : PINAX||Pour un output donné, force à 0 ce dernier.|
-|DriverGlobal|||Pour une Barette de LED donnée, envoie les signaux demandés|
+|DriverGlobal|||Envoie les signaux liés à la LED|
 |Tempo|**1** - R0 : Nms||Pour un temps donné, le processeur se met en attente (similaire à sleep)|
+|DriverReg|**1** - R0 : \*LEDArray||Pour une Barette de LED donnée, envoie les signaux demandés|
 
 ---
 Chaque fonction prendra des arguments de R0 à R3 (avec R3 étant une référence au tas si le besoin d'argument est supérieur à 3). Le renvoi se fait sur R0.
@@ -36,7 +48,7 @@ En réalité j'ai par la suite changé ce paramètre en 1. Avec la valeur forcé
 
 (Par la suite le Timer2,3,4 sont allumés (APB1ENR |= 0x07))
 
-On appelle ensuite le DriverGlobal
+On appelle ensuite DriverReg qui va lire dans R0 l'adresse du tableau de LEDS. Ce dernier doit contenir les 16\*3 valeurs de leds. Une tempo est ensuite lancée, et un nouveau jeu de led est lu.
 
 ## Variables globales
 
@@ -48,6 +60,9 @@ On appelle ensuite le DriverGlobal
 
 Voici le premier chronogramme observable avec les états de SCLK et SIN1. Aucun test matériel n'a encore été réalisé :
 ![SIN SCLK Graph](assets/graph_complete.png)
+Dans la dernière version du programme, deux jeux de LEDS sont envoyés après une tempo de quelques millisecondes. Voici les chronogrammes de ces dernières en simulation :
+
+![SIN SCLK Animated GIF](assets/graph_animated.gif)
 
 # Réaliser un code assembler à partir de C
 Comme vous le savez le code en langage C peut être compilé puis récupéré en assembler. C'est justement ici une solution que j'ai trouvé pour mieux comprendre différents principes, ou si certaines instructions ne me paraissent pas clair.
