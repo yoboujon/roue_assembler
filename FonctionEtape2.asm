@@ -11,6 +11,7 @@
 
 ;***************IMPORT/EXPORT**********************************************
 
+	IMPORT DataSend
 	EXPORT Set_SCLK
 	EXPORT Reset_SCLK
 	EXPORT DriverGlobal
@@ -38,7 +39,6 @@ SIN1 		EQU 7
 MILSEC		EQU 1304
 	
 PF			DCD (1<<31)
-DataSend	DCB 1
 
 ;**************************************************************************
 

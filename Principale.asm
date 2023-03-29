@@ -21,6 +21,7 @@
 ; IMPORT/EXPORT de procédure           
 
 	IMPORT Init_Cible
+	IMPORT Run_Timer3
 		
 	IMPORT Eteint_LED
 	IMPORT Allume_LED
@@ -51,6 +52,7 @@
 main   PROC 
 ;*******************************************************************************
 
+		BL Run_Timer3			;Allumage du Timer 3
 		LDR R4, [pc,#-2124]		;***********************************************
 		MOV R5, #1				;RetroEngineering : 0x40021000 << 18 -> Argument ? 
 		STR R5,[R4,#0x18]		;***********************************************
