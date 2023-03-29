@@ -172,7 +172,7 @@ PoidFortOKIF
 ;****************************************************************************
 
 DriverReg	PROC
-		PUSH {LR}	;R7 recupère LR
+		PUSH {LR,R6}	;Place LR dans la pile
 		MOV R1,R0		;On recupère l'adresse de base
 		MOV R0, #SCLK	;Argument SCLK
 		BL Set_X;		;Set_X(SCLK)
@@ -210,8 +210,8 @@ REG_PoidFortOKJUMP			;Fin Si
 		LDR R0,=DataSend;Adresse de DataSend
 		MOV R1,#0		; DataSend
 		STRB R1,[R0,#0]	;DataSend=0
-		POP {LR}
-		BX LR			;while(1)
+		POP {LR,R6}		;On remet LR dans les registres
+		BX LR			;On retourne dans le main
 		
 REG_PoidFortOKIF
 	BL Set_X				;Set_X(SCLK)
