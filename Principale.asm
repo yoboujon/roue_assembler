@@ -23,15 +23,23 @@
 	IMPORT Init_Cible
 	IMPORT Run_Timer3
 		
+;******ETAPE 1*********
+		
 	IMPORT Eteint_LED
 	IMPORT Allume_LED
 	IMPORT Inverse_LED
-	
+
+;******ETAPE 2*********
+
 	IMPORT Set_SCLK
 	IMPORT Reset_SCLK
 	IMPORT DriverGlobal
 	IMPORT DriverReg
 	IMPORT Tempo
+
+;******ETAPE 3*********
+
+	IMPORT Init_TVI
 
 	EXPORT main
 	
@@ -48,30 +56,34 @@ M		EQU 20
 main   PROC 
 ;*******************************************************************************
 		BL Run_Timer3			;Allumage du Timer 3
-		MOV R0,#1
+		MOV R0,#2
 		BL Init_Cible;
+;*******************************************************************************
+; ETAPE 3
+;*******************************************************************************
+		BL Init_TVI;
 ;*******************************************************************************
 ; ETAPE 2
 ;*******************************************************************************
-		MOV R7,#0
-Etape2								;for(int=0;i<M;i++)
-		LDR R0, =Barette3			;Adresse Jeu de led 1 : Argument
-		BL DriverReg				;*******************
-		MOV R0, #500					;Argument : 500ms
-		BL Tempo;					:Tempo(10)
-		LDR R0, =Barette2			;Adresse Jeu de led 2 : Argument
-		BL DriverReg				;*******************
-		MOV R0, #500					;Argument : 500ms
-		BL Tempo;					:Tempo(10)
-		
-		LDR R6,=GPIOBASEA			;On récup l'adresse	du GPIOA
-		LDR R6,[R6,#OffsetInput]	;On lit le GPIOA_IDR
-		AND R6, R6, #(0x01<<8)		;On masque pour n'avoir que le 9ème bit (Capteur)
-		CMP R6, #(0x01<<8)			;On vérifie que ce dernier bit est bien à 1.
-		BNE TheEnd					;if capteur = true -> on sort de la boucle
-		ADD R7,R7,#1				;i++
-		CMP R7, #M					;i==M ?
-		BNE Etape2					;if i!=10 -> on continue la boucle (Au final : R7 == M || R6)
+;		MOV R7,#0
+;Etape2								;for(int=0;i<M;i++)
+;		LDR R0, =Barette3			;Adresse Jeu de led 1 : Argument
+;		BL DriverReg				;*******************
+;		MOV R0, #500					;Argument : 500ms
+;		BL Tempo;					:Tempo(10)
+;		LDR R0, =Barette2			;Adresse Jeu de led 2 : Argument
+;		BL DriverReg				;*******************
+;		MOV R0, #500					;Argument : 500ms
+;		BL Tempo;					:Tempo(10)
+;		
+;		LDR R6,=GPIOBASEA			;On récup l'adresse	du GPIOA
+;		LDR R6,[R6,#OffsetInput]	;On lit le GPIOA_IDR
+;		AND R6, R6, #(0x01<<8)		;On masque pour n'avoir que le 9ème bit (Capteur)
+;		CMP R6, #(0x01<<8)			;On vérifie que ce dernier bit est bien à 1.
+;		BNE TheEnd					;if capteur = true -> on sort de la boucle
+;		ADD R7,R7,#1				;i++
+;		CMP R7, #M					;i==M ?
+;		BNE Etape2					;if i!=10 -> on continue la boucle (Au final : R7 == M || R6)
 ;*******************************************************************************
 ; ETAPE 1
 ;*******************************************************************************
