@@ -92,12 +92,11 @@ Allume_LED   PROC
 ;	On inverse la LED (besoin de R0)
 ;*******************************************************************************
 Inverse_LED	  PROC
-		PUSH {R12,R0}			;On stocke R12 dans R0
+		PUSH {R12,R5}			;R12 et R5 sont mis dans la pile
 		LDR R12,=GPIOBASEB		;On recupère l'adresse de base
+		LDR R1,=isLedOn			;On recupère l'adresse de isLedOn
 		MOV R5,#(0x01 << 10)	;1 décalé de 10 dans R5
 		CMP R0,#0				;Si R3=0 (default) alors on allume, sinon on eteint
-		;BEQ Allume
-		;B Eteint
 		BNE Eteint
 Allume
 		STRH R5,[R12,#OffsetSet]	;On stocke la variable R5 à l'adresse 0x0X40010C10 (set)
@@ -110,8 +109,8 @@ Eteint
 		
 
 Fin 
-	POP {R12,R0}			;On restitue R12 dans R0
-	BX LR					;Retour
+		POP {R12,R5}		;On restitue R12
+		BX LR				;Retour
 	
 	ENDP
 

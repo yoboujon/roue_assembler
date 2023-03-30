@@ -6,6 +6,8 @@
 	 AREA  MesDonnees, data, readwrite
 ;**************************************************************************
 
+isLedOn		DCB 0x00
+
 Barette1 	DCB 0xff,0x00,0x0
 			DCB 0xff,0x00,0x0
 			DCB 0xff,0x00,0x0
