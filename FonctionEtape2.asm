@@ -148,14 +148,14 @@ PoidFortOKJUMP				;Fin Si
 		BNE WHILE_NBBIT
 		
 		ADD R2, R2, #1		;On incrémente NBLed
-		CMP R2, #47			;SI NBLED==47 alors on arrête la boucle
+		CMP R2, #48			;SI NBLED==47 alors on arrête la boucle
 		BNE WHILE_NBLED
 		
 		MOV R0, #SCLK	;Argument SCLK
 		BL Reset_X;		;Reset_X(SCLK)
 		LDR R0,=DataSend;Adresse de DataSend
 		MOV R1,#0		; DataSend
-		STRB R1,[R0,#0]	;DataSend=0
+		STRB R1,[R0]	;DataSend=0
 		B .				;while(1)
 		
 PoidFortOKIF
@@ -198,11 +198,11 @@ REG_PoidFortOKJUMP			;Fin Si
 		MOV R0, #SCLK		;Argument SCLK
 		BL Set_X;			;Set_X(SCLK)
 		ADD R4, R4, #1		;On incrémente NBBit
-		CMP R4, #11			;SI NBBIT==11 alors on arrête la boucle
+		CMP R4, #12			;SI NBBIT==11 alors on arrête la boucle
 		BNE REG_WHILE_NBBIT
 		
 		ADD R2, R2, #1		;On incrémente NBLed
-		CMP R2, #47			;SI NBLED==47 alors on arrête la boucle
+		CMP R2, #48			;SI NBLED==47 alors on arrête la boucle
 		BNE REG_WHILE_NBLED
 		
 		MOV R0, #SCLK	;Argument SCLK

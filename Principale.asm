@@ -39,7 +39,7 @@
 	AREA  mesdonnees, data, readwrite
 ;*******************************************************************************
 		
-M		EQU 10
+M		EQU 20
 
 ;***************CODE************************************************************
    	AREA  moncode, code, readonly
@@ -48,30 +48,30 @@ M		EQU 10
 main   PROC 
 ;*******************************************************************************
 		BL Run_Timer3			;Allumage du Timer 3
-		LDR R4, [pc,#-2124]		;***********************************************
-		MOV R5, #1				;RetroEngineering : 0x40021000 << 18 -> Argument ? 
-		STR R5,[R4,#0x18]		;***********************************************
+		MOV R0,#1
 		BL Init_Cible;
 ;*******************************************************************************
 ; ETAPE 2
 ;*******************************************************************************
 		MOV R7,#0
 Etape2								;for(int=0;i<M;i++)
-		LDR R6,=GPIOBASEA			;On récup l'adresse	du GPIOA
-		LDR R0, =Barette1			;Adresse Jeu de led 1 : Argument
+		LDR R0, =Barette3			;Adresse Jeu de led 1 : Argument
 		BL DriverReg				;*******************
-		MOV R0, #10					;Argument : 10ms
+		MOV R0, #500					;Argument : 500ms
 		BL Tempo;					:Tempo(10)
 		LDR R0, =Barette2			;Adresse Jeu de led 2 : Argument
 		BL DriverReg				;*******************
+		MOV R0, #500					;Argument : 500ms
+		BL Tempo;					:Tempo(10)
 		
+		LDR R6,=GPIOBASEA			;On récup l'adresse	du GPIOA
 		LDR R6,[R6,#OffsetInput]	;On lit le GPIOA_IDR
 		AND R6, R6, #(0x01<<8)		;On masque pour n'avoir que le 9ème bit (Capteur)
 		CMP R6, #(0x01<<8)			;On vérifie que ce dernier bit est bien à 1.
-		BEQ TheEnd					;if capteur = true -> on sort de la boucle
+		BNE TheEnd					;if capteur = true -> on sort de la boucle
 		ADD R7,R7,#1				;i++
-		CMP R7, #10					;i==10 ?
-		BNE Etape2					;if i!=10 -> on continue la boucle (Au final : R7 == 10 || R6)
+		CMP R7, #M					;i==M ?
+		BNE Etape2					;if i!=10 -> on continue la boucle (Au final : R7 == M || R6)
 ;*******************************************************************************
 ; ETAPE 1
 ;*******************************************************************************
