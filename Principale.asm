@@ -83,9 +83,9 @@ Etape2								;for(int=0;i<M;i++)
 ;		LDR R0,[R12,#OffsetInput]	;On charge sa valeur avec l'OffsetInput
 ;		AND R0, R0, #(0x01 << 8)	;R0 est masqué pour n'avoir que le bit de l'offset input
 ;		CMP R0, #(0x01 << 8)		;On compare R0 doit etre egal à 1 pour le front montant
-;		BNE Is_detect					;On allume
-;		MOV R1,R0				;R1 possède la valeur de R0 avant
-;		BL Boucle				;Sinon on boucle
+;		BNE Is_detect				;On allume
+;		MOV R1,R0					;R1 possède la valeur de R0 avant
+;		BL Boucle					;Sinon on boucle
 ;				
 ;Is_detect
 ;		CMP R1, #(0x01 << 8)		;R1 doit etre egal à 0 pour le front montant

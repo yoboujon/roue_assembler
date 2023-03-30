@@ -89,24 +89,24 @@ Allume_LED   PROC
 		ENDP
 			
 ;*******************************************************************************
-;	On inverse la LED (besoin de R3)
+;	On inverse la LED (besoin de R0)
 ;*******************************************************************************
 Inverse_LED	  PROC
 		PUSH {R12,R0}			;On stocke R12 dans R0
 		LDR R12,=GPIOBASEB		;On recupère l'adresse de base
 		MOV R5,#(0x01 << 10)	;1 décalé de 10 dans R5
-		CMP R3,#0				;Si R3=0 (default) alors on allume, sinon on eteint
+		CMP R0,#0				;Si R3=0 (default) alors on allume, sinon on eteint
 		;BEQ Allume
 		;B Eteint
 		BNE Eteint
 Allume
-	STRH R5,[R12,#OffsetSet]	;On stocke la variable R5 à l'adresse 0x0X40010C10 (set)
-	MOV R3,#1;					;On remet la variable à 1
-	B Fin						;Retour	
+		STRH R5,[R12,#OffsetSet]	;On stocke la variable R5 à l'adresse 0x0X40010C10 (set)
+		MOV R0,#1;					;On remet la variable à 1
+		B Fin						;Retour	
 Eteint
-	STRH R5,[R12,#OffsetReset]	;On stocke la variable R5 à l'adresse 0x0X40010C14 (reset)
-	MOV R3,#0;					;On remet la variable à 0
-	B Fin
+		STRH R5,[R12,#OffsetReset]	;On stocke la variable R5 à l'adresse 0x0X40010C14 (reset)
+		MOV R0,#0;					;On remet la variable à 0
+		B Fin
 		
 
 Fin 
