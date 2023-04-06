@@ -13,6 +13,11 @@
 
 	IMPORT DataSend
 	EXPORT Init_TVI
+	EXPORT Timer1_IRQHandler
+	EXPORT setIRQFunction
+		
+	IMPORT DriverReg
+	IMPORT Tempo
 
 ;**************************************************************************
 
@@ -30,11 +35,8 @@
 	 AREA  MesDonnees, data, readwrite
 ;**************************************************************************
 
-Timer_Up_Reg			EQU	25+0x40
-Timer_Cc_Reg			EQU	27+0x40
 MAX_Interrupt			EQU 256
 TVI_Flash				EQU 0x0
-TVI_Pile				EQU	0x20000200		;9 bits de poids faible = 0
 
 ;**************************************************************************
 
@@ -43,16 +45,25 @@ TVI_Pile				EQU	0x20000200		;9 bits de poids faible = 0
 ;***************CODE*******************************************************
    	AREA  moncode, code, readonly
 ;**************************************************************************
-
-scbvector_link PROC
-		LDR R1,=TVI_Pile				;On relit l'adresse de TVIPile
-		LDR R0,=SCB_VTOR				;ON lit l'adresse de SCB_VTOR
-		STR R1,[R0]						;On met l'adresse de TVI_Pile dans le SCB_VTOR
-		BX LR
-	ENDP
 		
 Timer1_IRQHandler PROC
-		
+		PUSH {LR}
+		LDRB R2,=SwitchState
+		LDRB R3,[R2]
+		CMP R3, #0
+		BEQ SETBarrette1
+SETBarrette2
+		LDR R0, =Barette2			;Adresse Jeu de led 2 : Argument
+SETBarrette1
+		LDR R0, =Barette1			;Adresse Jeu de led 1 : Argument
+		BL DriverReg				;DriverReg(Barette3)
+		LDR R0,=TIM1_SR
+		LDR R1, [R0]
+		AND R1, #~(1<<1)
+		STR R1, [R0]
+		POP {LR}
+		BX LR
+	ENDP
 
 ;On copie toute la TVI dans la RAM (0x2....)
 ;On modifie les interruptions Up et CC pour pointer sur nos fonctions rien qu'à nous
@@ -69,9 +80,25 @@ for_tvi								;for(int i=0;i<MAX_Interrupt;i++)
 		ADD R2,R2,#1					;i++
 		CMP R2,#MAX_Interrupt			;is i == MAX_Interrupt?
 		BNE	for_tvi
-		
-		BL scbvector_link				;Mets à jour SCB_VTOR avec TVI_Pile
-	
+scbvector_link
+		LDR R1,=TVI_Pile				;On relit l'adresse de TVIPile
+		LDR R0,=SCB_VTOR				;ON lit l'adresse de SCB_VTOR
+		STR R1,[R0]						;On met l'adresse de TVI_Pile dans le SCB_VTOR
+		BX LR
 	ENDP
+
+;*******************************************************************
+;Arguments :
+;R0 -> Interruption
+;R1 -> Adresse de la fonction
+;*******************************************************************
+setIRQFunction PROC
+		LDR R3,=TVI_Pile
+		ADD R0,R0,R3
+		STR R1, [R0]
+		BX LR
+	ENDP
+	
+
 ;**************************************************************************
 	END

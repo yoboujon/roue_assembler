@@ -22,6 +22,7 @@
 
 	IMPORT Init_Cible
 	IMPORT Run_Timer3
+	IMPORT Run_Timer1
 		
 ;******ETAPE 1*********
 		
@@ -40,6 +41,8 @@
 ;******ETAPE 3*********
 
 	IMPORT Init_TVI
+	IMPORT Timer1_IRQHandler
+	IMPORT setIRQFunction
 
 	EXPORT main
 	
@@ -47,7 +50,9 @@
 	AREA  mesdonnees, data, readwrite
 ;*******************************************************************************
 		
-M		EQU 20
+M						EQU 20
+Timer_Up_Reg			EQU	(25*4)+0x40
+Timer_Cc_Reg			EQU	(27*4)+0x40
 
 ;***************CODE************************************************************
    	AREA  moncode, code, readonly
@@ -55,13 +60,17 @@ M		EQU 20
 ;*******************************************************************************	
 main   PROC 
 ;*******************************************************************************
-		BL Run_Timer3			;Allumage du Timer 3
 		MOV R0,#2
 		BL Init_Cible;
 ;*******************************************************************************
 ; ETAPE 3
 ;*******************************************************************************
 		BL Init_TVI;
+		MOV R0, #Timer_Cc_Reg
+		LDR R1,=Timer1_IRQHandler
+		BL setIRQFunction
+		BL Run_Timer3			;Allumage du Timer 3
+		BL Run_Timer1
 ;*******************************************************************************
 ; ETAPE 2
 ;*******************************************************************************
