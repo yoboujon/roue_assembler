@@ -56,7 +56,7 @@ Timer1_IRQHandler PROC
 		;On récupère le CNT, on le divise par le nombre de jeu de leds -> on affect le ARR du timer4
 		LDR R0,=TIM1_CNT
 		LDR R0,[R0]
-		MOV R1,#2
+		MOV R1,#8
 		UDIV R0, R0, R1
 		LDR R1,=TIM4_ARR
 		STR R0,[R1]
@@ -91,20 +91,20 @@ Timer4_IRQHandler PROC
 		
 		LDR R2,=SwitchState			;On lit l'adresse de switch state
 		LDRB R3,[R2]				;On charge la donnée
-		CMP R3, #0					;if(Switchstate == 0)
-		BEQ SETBarrette1			; {DriverReg(Barette1)}
-SETBarrette2
-		LDR R0, =Barette2			;else {DriverReg(Barette2)} Adresse Jeu de led 2 : Argument
+		CMP R3, #8					;if(Switchstate == 8)
+		BEQ ResetSwitchState
+		B SetLED
+ResetSwitchState					;Switchstate = 0
 		MOV R3, #0;
-		STRB R3,[R2]				;On remet la donnée
 		B GoToDriverReg
-SETBarrette1
-		LDR R0, =Barette1			;Adresse Jeu de led 1 : Argument
-		MOV R3, #1;
-		STRB R3,[R2]				;On remet la donnée
+SetLED
+		LDR R0,=mire				;tempMire
+		MOV R1,#48
+		MLA R0,R1,R3,R0				;tempMire += (48*Switchstate)
 GoToDriverReg
-		BL DriverReg				;DriverReg(Barette3)
-		
+		ADD R3, R3, #1				;Switchstate++
+		STRB R3,[R2]				;On remet la donnée
+		BL DriverReg				;DriverReg(mire+Switchstate)
 		LDR R0,=TIM4_SR				;On charge l'adresse du flag
 		LDR R1, [R0]				;On lit le flag dans SR
 		AND R1, #~(1<<0)			;Reset le flag de UIF
