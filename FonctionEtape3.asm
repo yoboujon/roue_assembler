@@ -48,14 +48,20 @@ TVI_Flash				EQU 0x0
 		
 Timer1_IRQHandler PROC
 		PUSH {LR}
-		LDRB R2,=SwitchState
-		LDRB R3,[R2]
-		CMP R3, #0
-		BEQ SETBarrette1
+		LDR R2,=SwitchState			;On lit l'adresse de switch state
+		LDRB R3,[R2]				;On charge la donnée
+		CMP R3, #0					;if(Switchstate == 0)
+		BEQ SETBarrette1			; {DriverReg(Barette1)}
 SETBarrette2
-		LDR R0, =Barette2			;Adresse Jeu de led 2 : Argument
+		LDR R0, =Barette2			;else {DriverReg(Barette2)} Adresse Jeu de led 2 : Argument
+		MOV R3, #0;
+		STRB R3,[R2]				;On remet la donnée
+		B GoToDriverReg
 SETBarrette1
 		LDR R0, =Barette1			;Adresse Jeu de led 1 : Argument
+		MOV R3, #1;
+		STRB R3,[R2]				;On remet la donnée
+GoToDriverReg
 		BL DriverReg				;DriverReg(Barette3)
 		LDR R0,=TIM1_SR
 		LDR R1, [R0]
