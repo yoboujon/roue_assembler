@@ -13,7 +13,11 @@
 
 	IMPORT DataSend
 	EXPORT Init_TVI
+	IMPORT Stop_Timer4
+	IMPORT Run_Timer4
+	IMPORT mire
 	EXPORT Timer1_IRQHandler
+	EXPORT Timer1Up_IRQHandler
 	EXPORT setIRQFunction
 		
 	IMPORT DriverReg
@@ -48,6 +52,7 @@ TVI_Flash				EQU 0x0
 		
 Timer1_IRQHandler PROC
 		PUSH {LR}
+		BL Run_Timer4
 		LDR R2,=SwitchState			;On lit l'adresse de switch state
 		LDRB R3,[R2]				;On charge la donnée
 		CMP R3, #0					;if(Switchstate == 0)
@@ -63,10 +68,22 @@ SETBarrette1
 		STRB R3,[R2]				;On remet la donnée
 GoToDriverReg
 		BL DriverReg				;DriverReg(Barette3)
-		LDR R0,=TIM1_SR
-		LDR R1, [R0]
-		AND R1, #~(1<<1)
-		STR R1, [R0]
+		LDR R0,=TIM1_SR				;On charge l'adresse du flag
+		LDR R1, [R0]				;On lit le flag dans SR
+		AND R1, #~(1<<1)			;Reset le flag du SR
+		STR R1, [R0]				;On le stock
+		BL Stop_Timer4
+		POP {LR}
+		BX LR
+	ENDP
+
+Timer1Up_IRQHandler PROC
+		PUSH {LR}
+		BL Stop_Timer4
+		LDR R0,=TIM1_SR				;On charge l'adresse du flag
+		LDR R1, [R0]				;On lit le flag dans SR
+		AND R1, #~(1<<0)			;Reset le flag du SR
+		STR R1, [R0]				;On le stock
 		POP {LR}
 		BX LR
 	ENDP

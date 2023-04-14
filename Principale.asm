@@ -42,6 +42,7 @@
 
 	IMPORT Init_TVI
 	IMPORT Timer1_IRQHandler
+	IMPORT Timer1Up_IRQHandler
 	IMPORT setIRQFunction
 
 	EXPORT main
@@ -60,12 +61,15 @@ Timer_Cc_Reg			EQU	(27*4)+0x40
 ;*******************************************************************************	
 main   PROC 
 ;*******************************************************************************
+		BL Init_TVI;
 		MOV R0,#2
 		BL Init_Cible;
 ;*******************************************************************************
 ; ETAPE 3
 ;*******************************************************************************
-		BL Init_TVI;
+		MOV R0, #Timer_Up_Reg
+		LDR R1,=Timer1Up_IRQHandler
+		BL setIRQFunction
 		MOV R0, #Timer_Cc_Reg
 		LDR R1,=Timer1_IRQHandler
 		BL setIRQFunction
