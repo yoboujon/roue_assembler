@@ -44,6 +44,7 @@
 	IMPORT Timer1_IRQHandler
 	IMPORT Timer1Up_IRQHandler
 	IMPORT setIRQFunction
+	IMPORT Timer4_IRQHandler
 
 	EXPORT main
 	
@@ -54,6 +55,7 @@
 M						EQU 20
 Timer_Up_Reg			EQU	(25*4)+0x40
 Timer_Cc_Reg			EQU	(27*4)+0x40
+Timer4_Reg				EQU	(30*4)+0x40
 
 ;***************CODE************************************************************
    	AREA  moncode, code, readonly
@@ -72,6 +74,9 @@ main   PROC
 		BL setIRQFunction
 		MOV R0, #Timer_Cc_Reg
 		LDR R1,=Timer1_IRQHandler
+		BL setIRQFunction
+		MOV R0, #Timer4_Reg
+		LDR R1,=Timer4_IRQHandler
 		BL setIRQFunction
 		BL Run_Timer3			;Allumage du Timer 3
 		BL Run_Timer1

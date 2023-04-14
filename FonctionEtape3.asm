@@ -19,6 +19,7 @@
 	EXPORT Timer1_IRQHandler
 	EXPORT Timer1Up_IRQHandler
 	EXPORT setIRQFunction
+	EXPORT Timer4_IRQHandler
 		
 	IMPORT DriverReg
 	IMPORT Tempo
@@ -52,7 +53,42 @@ TVI_Flash				EQU 0x0
 		
 Timer1_IRQHandler PROC
 		PUSH {LR}
+		;On récupère le CNT, on le divise par le nombre de jeu de leds -> on affect le ARR du timer4
+		LDR R0,=TIM1_CNT
+		LDR R0,[R0]
+		MOV R1,#2
+		UDIV R0, R0, R1
+		LDR R1,=TIM4_ARR
+		STR R0,[R1]
+
+		LDR R0,=TIM1_CNT
+		MOV R1,#0
+		STR R1,[R0]
+		
+		LDR R0,=TIM1_SR				;On charge l'adresse du flag
+		LDR R1, [R0]				;On lit le flag dans SR
+		AND R1, #~(1<<1)			;Reset le flag de CC1IF
+		STR R1, [R0]				;On le stock
 		BL Run_Timer4
+		POP {LR}
+		BX LR
+	ENDP
+
+Timer1Up_IRQHandler PROC
+		PUSH {LR}
+		BL Stop_Timer4
+		LDR R0,=TIM1_SR				;On charge l'adresse du flag
+		LDR R1, [R0]				;On lit le flag dans SR
+		AND R1, #~(1<<0)			;Reset le flag de UIF
+		STR R1, [R0]				;On le stock
+		POP {LR}
+		BX LR
+	ENDP
+
+Timer4_IRQHandler PROC
+	;	SwitchState;
+		PUSH {LR}
+		
 		LDR R2,=SwitchState			;On lit l'adresse de switch state
 		LDRB R3,[R2]				;On charge la donnée
 		CMP R3, #0					;if(Switchstate == 0)
@@ -68,21 +104,10 @@ SETBarrette1
 		STRB R3,[R2]				;On remet la donnée
 GoToDriverReg
 		BL DriverReg				;DriverReg(Barette3)
-		LDR R0,=TIM1_SR				;On charge l'adresse du flag
+		
+		LDR R0,=TIM4_SR				;On charge l'adresse du flag
 		LDR R1, [R0]				;On lit le flag dans SR
-		AND R1, #~(1<<1)			;Reset le flag du SR
-		STR R1, [R0]				;On le stock
-		BL Stop_Timer4
-		POP {LR}
-		BX LR
-	ENDP
-
-Timer1Up_IRQHandler PROC
-		PUSH {LR}
-		BL Stop_Timer4
-		LDR R0,=TIM1_SR				;On charge l'adresse du flag
-		LDR R1, [R0]				;On lit le flag dans SR
-		AND R1, #~(1<<0)			;Reset le flag du SR
+		AND R1, #~(1<<0)			;Reset le flag de UIF
 		STR R1, [R0]				;On le stock
 		POP {LR}
 		BX LR
