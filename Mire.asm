@@ -1,3 +1,4 @@
+; Language: Assembly
 ;************************************************************************
 	THUMB	
 	REQUIRE8
@@ -32,13 +33,13 @@ PuissanceNbSecteur equ 3
 
 
 ;************************************************************************
-; 					IMPORT/EXPORT Système
+; 					IMPORT/EXPORT Systï¿½me
 ;************************************************************************
 
 	IMPORT ||Lib$$Request$$armlib|| [CODE,WEAK]
 
 
-; IMPORT/EXPORT de procédure           
+; IMPORT/EXPORT de procï¿½dure           
 
 
 

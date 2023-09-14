@@ -1,3 +1,4 @@
+; Language: Assembly
 ;***************************************************************************
 	THUMB	
 	REQUIRE8
@@ -53,7 +54,7 @@ TVI_Flash				EQU 0x0
 		
 Timer1_IRQHandler PROC
 		PUSH {LR}
-		;On récupère le CNT, on le divise par le nombre de jeu de leds -> on affect le ARR du timer4
+		;On rï¿½cupï¿½re le CNT, on le divise par le nombre de jeu de leds -> on affect le ARR du timer4
 		LDR R0,=TIM1_CNT
 		LDR R0,[R0]
 		MOV R1,#8
@@ -90,7 +91,7 @@ Timer4_IRQHandler PROC
 		PUSH {LR}
 		
 		LDR R2,=SwitchState			;On lit l'adresse de switch state
-		LDRB R3,[R2]				;On charge la donnée
+		LDRB R3,[R2]				;On charge la donnï¿½e
 		CMP R3, #8					;if(Switchstate == 8)
 		BEQ ResetSwitchState
 		B SetLED
@@ -103,7 +104,7 @@ SetLED
 		MLA R0,R1,R3,R0				;tempMire += (48*Switchstate)
 GoToDriverReg
 		ADD R3, R3, #1				;Switchstate++
-		STRB R3,[R2]				;On remet la donnée
+		STRB R3,[R2]				;On remet la donnï¿½e
 		BL DriverReg				;DriverReg(mire+Switchstate)
 		LDR R0,=TIM4_SR				;On charge l'adresse du flag
 		LDR R1, [R0]				;On lit le flag dans SR
@@ -114,8 +115,8 @@ GoToDriverReg
 	ENDP
 
 ;On copie toute la TVI dans la RAM (0x2....)
-;On modifie les interruptions Up et CC pour pointer sur nos fonctions rien qu'à nous
-;On fait pointer à SCB_VTOR l'adresse de la TVI que nous avons copié
+;On modifie les interruptions Up et CC pour pointer sur nos fonctions rien qu'ï¿½ nous
+;On fait pointer ï¿½ SCB_VTOR l'adresse de la TVI que nous avons copiï¿½
 Init_TVI PROC
 		LDR R0,=TVI_Flash				;On Lit le premier TVI
 		LDR R1,=TVI_Pile				;Nouvelle TVI

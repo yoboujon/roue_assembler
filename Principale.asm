@@ -1,4 +1,4 @@
-		
+; Language: Assembly	
 
 ;************************************************************************
 	THUMB	
@@ -10,7 +10,7 @@
 	include LUMIERES.inc
 
 ;************************************************************************
-; 					IMPORT/EXPORT Système
+; 					IMPORT/EXPORT Systï¿½me
 ;************************************************************************
 
 	IMPORT ||Lib$$Request$$armlib|| [CODE,WEAK]
@@ -18,7 +18,7 @@
 
 
 
-; IMPORT/EXPORT de procédure           
+; IMPORT/EXPORT de procï¿½dure           
 
 	IMPORT Init_Cible
 	IMPORT Run_Timer3
@@ -59,7 +59,7 @@ Timer4_Reg				EQU	(30*4)+0x40
 
 ;***************CODE************************************************************
    	AREA  moncode, code, readonly
-; 	Procédure principale et point d'entrée du projet
+; 	Procï¿½dure principale et point d'entrï¿½e du projet
 ;*******************************************************************************	
 main   PROC 
 ;*******************************************************************************
@@ -94,10 +94,10 @@ main   PROC
 ;		MOV R0, #500					;Argument : 500ms
 ;		BL Tempo;					:Tempo(10)
 ;		
-;		LDR R6,=GPIOBASEA			;On récup l'adresse	du GPIOA
+;		LDR R6,=GPIOBASEA			;On rï¿½cup l'adresse	du GPIOA
 ;		LDR R6,[R6,#OffsetInput]	;On lit le GPIOA_IDR
-;		AND R6, R6, #(0x01<<8)		;On masque pour n'avoir que le 9ème bit (Capteur)
-;		CMP R6, #(0x01<<8)			;On vérifie que ce dernier bit est bien à 1.
+;		AND R6, R6, #(0x01<<8)		;On masque pour n'avoir que le 9ï¿½me bit (Capteur)
+;		CMP R6, #(0x01<<8)			;On vï¿½rifie que ce dernier bit est bien ï¿½ 1.
 ;		BNE TheEnd					;if capteur = true -> on sort de la boucle
 ;		ADD R7,R7,#1				;i++
 ;		CMP R7, #M					;i==M ?
@@ -109,16 +109,16 @@ main   PROC
 ;		MOV R1,#0;
 ;		MOV R3,#0;
 ;Boucle
-;		LDR R12,=GPIOBASEA			;On récup l'adresse	du GPIOA		
+;		LDR R12,=GPIOBASEA			;On rï¿½cup l'adresse	du GPIOA		
 ;		LDR R0,[R12,#OffsetInput]	;On charge sa valeur avec l'OffsetInput
-;		AND R0, R0, #(0x01 << 8)	;R0 est masqué pour n'avoir que le bit de l'offset input
-;		CMP R0, #(0x01 << 8)		;On compare R0 doit etre egal à 1 pour le front montant
+;		AND R0, R0, #(0x01 << 8)	;R0 est masquï¿½ pour n'avoir que le bit de l'offset input
+;		CMP R0, #(0x01 << 8)		;On compare R0 doit etre egal ï¿½ 1 pour le front montant
 ;		BNE Is_detect				;On allume
-;		MOV R1,R0					;R1 possède la valeur de R0 avant
+;		MOV R1,R0					;R1 possï¿½de la valeur de R0 avant
 ;		BL Boucle					;Sinon on boucle
 ;				
 ;Is_detect
-;		CMP R1, #(0x01 << 8)		;R1 doit etre egal à 0 pour le front montant
+;		CMP R1, #(0x01 << 8)		;R1 doit etre egal ï¿½ 0 pour le front montant
 ;		BNE Boucle
 ;
 ;T_Oui

@@ -1,3 +1,4 @@
+; Language: Assembly
 ;***************************************************************************
 	THUMB	
 	REQUIRE8
@@ -46,13 +47,13 @@
 
 
 ;########################################################################
-; Procédure ????
+; Procï¿½dure ????
 ;########################################################################
 ;
-; Paramètre entrant  : ???
-; Paramètre sortant  : ???
+; Paramï¿½tre entrant  : ???
+; Paramï¿½tre sortant  : ???
 ; Variables globales : ???
-; Registres modifiés : ???
+; Registres modifiï¿½s : ???
 ;------------------------------------------------------------------------
 
 
@@ -62,14 +63,14 @@
 Eteint_LED	PROC
 
 		PUSH {R12,R0}				;On stocke R12 dans R0
-		LDR R12,=GPIOBASEB			;On recupère l'adresse de base
-		MOV R5,#(0x01 << 10)		;1 décalé de 10 dans R5
-		STRH R5,[R12,#OffsetReset]	;On stocke la variable R5 à l'adresse 0x0X40010C14 (reset)
+		LDR R12,=GPIOBASEB			;On recupï¿½re l'adresse de base
+		MOV R5,#(0x01 << 10)		;1 dï¿½calï¿½ de 10 dans R5
+		STRH R5,[R12,#OffsetReset]	;On stocke la variable R5 ï¿½ l'adresse 0x0X40010C14 (reset)
 		POP {R12,R0}				;On restitue R12 dans R0
 		BX LR						;Retour
-;LDR R5,[R12,#0x0C]		;Valeur à l'adresse de l'output
+;LDR R5,[R12,#0x0C]		;Valeur ï¿½ l'adresse de l'output
 ;AND R5, R5,#~(0x01 << 10)	;OU LOGIQUE pour calculer la valeur a mettre dans l'output
-;STRH R5,[R12,#0x0C]			;Etat du port B (R5) stocké dans l'output 	
+;STRH R5,[R12,#0x0C]			;Etat du port B (R5) stockï¿½ dans l'output 	
 		ENDP
 				
 ;*******************************************************************************
@@ -78,14 +79,14 @@ Eteint_LED	PROC
 Allume_LED   PROC
 
 		PUSH {R12,R0}			;On stocke R12 dans R0
-		LDR R12,=GPIOBASEB		;On recupère l'adresse de base
-		MOV R5,#(0x01 << 10)	;1 décalé de 10 dans R5
-		STRH R5,[R12,#OffsetSet]	;On stocke la variable R5 à l'adresse 0x0X40010C10 (set)
+		LDR R12,=GPIOBASEB		;On recupï¿½re l'adresse de base
+		MOV R5,#(0x01 << 10)	;1 dï¿½calï¿½ de 10 dans R5
+		STRH R5,[R12,#OffsetSet]	;On stocke la variable R5 ï¿½ l'adresse 0x0X40010C10 (set)
 		POP {R12,R0}			;On restitue R12 dans R0
 		BX LR					;Retour
-;LDR R5,[R12,#0x0C]		;Valeur à l'adresse de l'output
+;LDR R5,[R12,#0x0C]		;Valeur ï¿½ l'adresse de l'output
 ;ORR R5, R5,#(0x01 << 10)	;OU LOGIQUE pour calculer la valeur a mettre dans l'output
-;STRH R5,[R12,#0x0C]			;Etat du port B (R5) stocké dans l'output 
+;STRH R5,[R12,#0x0C]			;Etat du port B (R5) stockï¿½ dans l'output 
 			
 		ENDP
 			
@@ -94,18 +95,18 @@ Allume_LED   PROC
 ;*******************************************************************************
 Inverse_LED	  PROC
 		PUSH {R12,R5}			;R12 et R5 sont mis dans la pile
-		LDR R12,=GPIOBASEB		;On recupère l'adresse de base
-		LDR R1,=isLedOn			;On recupère l'adresse de isLedOn
-		MOV R5,#(0x01 << 10)	;1 décalé de 10 dans R5
+		LDR R12,=GPIOBASEB		;On recupï¿½re l'adresse de base
+		LDR R1,=isLedOn			;On recupï¿½re l'adresse de isLedOn
+		MOV R5,#(0x01 << 10)	;1 dï¿½calï¿½ de 10 dans R5
 		CMP R0,#0				;Si R3=0 (default) alors on allume, sinon on eteint
 		BNE Eteint
 Allume
-		STRH R5,[R12,#OffsetSet]	;On stocke la variable R5 à l'adresse 0x0X40010C10 (set)
-		MOV R0,#1;					;On remet la variable à 1
+		STRH R5,[R12,#OffsetSet]	;On stocke la variable R5 ï¿½ l'adresse 0x0X40010C10 (set)
+		MOV R0,#1;					;On remet la variable ï¿½ 1
 		B Fin						;Retour	
 Eteint
-		STRH R5,[R12,#OffsetReset]	;On stocke la variable R5 à l'adresse 0x0X40010C14 (reset)
-		MOV R0,#0;					;On remet la variable à 0
+		STRH R5,[R12,#OffsetReset]	;On stocke la variable R5 ï¿½ l'adresse 0x0X40010C14 (reset)
+		MOV R0,#0;					;On remet la variable ï¿½ 0
 		B Fin
 		
 
