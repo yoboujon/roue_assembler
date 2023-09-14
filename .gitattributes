@@ -1,0 +1,5 @@
+*       linguist-language=Plain Text
+*.c     linguist-language=C
+*.h     linguist-language=C
+*.asm   linguist-language=Assembly
+*.s     linguist-language=Assembly
